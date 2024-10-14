@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './Component/Login';
+import WeatherDashboard from './Component/WeatherDashboard';
+import TodoList from './Component/TodoList';
 
-function App() {
+const App = () => {
+  // Clear the authentication status on every page reload
+  useEffect(() => {
+    localStorage.removeItem('isAuthenticated');
+  }, []);
+
+  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        {/* Always go to login page on page load */}
+        <Route path="/" element={<Login />} />
+        
+        {/* Weather Dashboard route */}
+        <Route
+          path="/weather"
+          element={isAuthenticated ? <WeatherDashboard /> : <Navigate to="/" />}
+        />
+        
+        {/* To-Do List route */}
+        <Route
+          path="/todolist"
+          element={isAuthenticated ? <TodoList /> : <Navigate to="/" />}
+        />
+        
+        {/* Catch-all route */}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
